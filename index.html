@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#7453bd">
+  <meta name="description" content="مغامرة محققة المتجر الإلكتروني - مشروع تفاعلي لمادة المهارات الرقمية للصف الثالث المتوسط">
+  <title>مغامرة محققة المتجر الإلكتروني | بوليفارد الرياض</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="الصفحة الرئيسية">
+      <span class="brand-mark">⌕</span>
+      <span><b>محققة المتجر</b><small>مغامرة رقمية في بوليفارد الرياض</small></span>
+    </a>
+    <div class="header-actions">
+      <span class="class-chip"><i></i> ثالث متوسط</span>
+      <button class="icon-button" id="helpBtn" type="button" aria-label="تعليمات">؟</button>
+    </div>
+  </header>
+
+  <main id="top" class="page-shell">
+    <section class="hero" id="hero">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <span class="eyebrow"><span class="sparkle">✦</span> مهمة استقصاء رقمية</span>
+        <h1>مغامرة محققة<br><em>المتجر الإلكتروني</em></h1>
+        <p>جولتكِ في أسواق بوليفارد الرياض تبدأ بسؤال واحد:<br><strong>هل يستحق هذا المتجر ثقتنا؟</strong></p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary btn-large" id="startBtn" type="button">ابدئي التحقيق <span>←</span></button>
+          <button class="btn btn-glass" id="howBtn" type="button">كيف أشارك؟</button>
+        </div>
+        <div class="hero-mini-stats">
+          <span>21 معيارًا للفحص</span><b>✦</b><span>5 محطات تحقيق</span><b>✦</b><span>تقريركِ في النهاية</span>
+        </div>
+      </div>
+      <div class="hero-character-note"><span class="pulse-dot"></span> مهمتكِ: افحصي، وثّقي، ثم أصدري الحكم</div>
+    </section>
+
+    <section class="journey-strip" aria-label="مراحل الرحلة">
+      <div class="journey-heading"><div><span class="section-kicker">خريطة المهمة</span><h2>محطات رحلتكِ</h2></div><span class="journey-count" id="stepCount">المرحلة 1 من 8</span></div>
+      <div class="stepper" id="stepper" aria-label="تقدم الرحلة"></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </section>
+
+    <section class="workspace" id="workspace">
+      <div class="workspace-main" id="stageContent" aria-live="polite"></div>
+      <aside class="side-panel">
+        <div class="side-card mission-card">
+          <div class="side-card-head"><span class="side-icon">✦</span><span>بطاقة المحققة</span></div>
+          <div class="avatar-orbit"><div class="avatar">🕵🏻‍♀️</div><span class="orbit-star star-a">✧</span><span class="orbit-star star-b">✦</span></div>
+          <h3 id="sideStudent">المحققة الجديدة</h3>
+          <p id="sideClass">الفصل: لم يحدد بعد</p>
+          <div class="mini-divider"></div>
+          <div class="side-stat"><span>تقدم المهمة</span><b id="sideProgress">0%</b></div>
+          <div class="mini-track"><span id="sideProgressFill"></span></div>
+          <div class="side-stat"><span>المعايير المكتملة</span><b id="sideCriteria">0 / 21</b></div>
+        </div>
+        <div class="side-card score-card">
+          <div class="side-card-head"><span class="side-icon gold">✧</span><span>رصيد التحقيق</span></div>
+          <div class="score-number"><strong id="sideScore">—</strong><small>نقطة</small></div>
+          <p>تُحتسب النتيجة بعد تقييم معايير المتجر.</p>
+        </div>
+        <div class="side-tip"><span>💡</span><p><b>تلميح المحققة</b><br><span id="tipText">لا تحكمي على المتجر من شكله فقط؛ ابحثي عن دليل يدعم كل ملاحظة.</span></p></div>
+      </aside>
+    </section>
+
+    <footer class="site-footer"><span>مشروع الوحدة الثالثة · التجارة الإلكترونية</span><span>مادة المهارات الرقمية · الصف الثالث المتوسط</span><span>✦ تعلمي بذكاء، وتسوقي بأمان</span></footer>
+  </main>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <dialog id="helpDialog" class="help-dialog">
+    <button class="dialog-close" id="closeHelp" type="button" aria-label="إغلاق">×</button>
+    <span class="section-kicker">دليل المشاركة</span><h2>كيف تنفذين المهمة؟</h2>
+    <ol><li>سجلي اسمكِ وفصلكِ ومجموعتكِ.</li><li>أدخلي بيانات متجر إلكتروني ستفحصينه.</li><li>انتقلي بين محطات التقييم الخمس، واختاري درجة لكل معيار.</li><li>أضيفي ملاحظاتكِ عند الحاجة.</li><li>راجعي النتيجة وحددي توصيتكِ.</li><li>أرسلي المشاركة لحفظها في سجل المشروع.</li></ol>
+    <div class="safety-note">تنبيه: لا تدخلي بيانات شخصية أو بنكية في أي متجر، ولا تنفذي عملية شراء حقيقية. اكتفي بفحص الصفحات العامة.</div>
+    <button class="btn btn-primary" id="closeHelpBottom" type="button">فهمت، لنبدأ</button>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
