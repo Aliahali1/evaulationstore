@@ -323,7 +323,7 @@ function render() {
   else stageContent.innerHTML = renderResultsStage();
   bindStageEvents();
   persistDraft();
-  updateScene(); updateTourBar(); checkAxisCompletion();
+  $("#workspace").classList.toggle("no-side", state.stage !== 8); updateScene(); updateTourBar(); checkAxisCompletion();
 }
 
 function collectCurrentInputs() {
