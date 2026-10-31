@@ -111,3 +111,5 @@ body{background:#cfc2ee}
   .tour-pin,.tour-fill{transition:none}
 }
 @media print{.scene,.scene-caption,.tour-bar{display:none!important}body{background:#fff}}
+
+.teacher-credit{flex-basis:100%;text-align:center;margin-top:10px;padding-top:12px;border-top:1px solid #ffffff88;font-size:14px;color:#3f2f5c}.teacher-credit b{color:#6a3fb0;font-weight:900}

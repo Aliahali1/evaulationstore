@@ -78,6 +78,17 @@ function setTeacherCode() {
 /* ---------- استقبال المشاركات ---------- */
 
 function doPost(e) {
+  // طلبات صفحة المعلمة (teacher.html على GitHub Pages) — تُعالج قبل قفل الحفظ لأن teacherDelete تأخذ القفل بنفسها
+  var act = e && e.parameter && e.parameter.action;
+  if (act === 'teacherData' || act === 'teacherDelete') {
+    try {
+      var tcode = String(e.parameter.code || '');
+      if (act === 'teacherData') return respond_({ ok: true, data: teacherData(tcode) });
+      return respond_({ ok: true, result: teacherDelete(tcode, String(e.parameter.id || '')) });
+    } catch (terr) {
+      return respond_({ ok: false, error: String((terr && terr.message) || terr) });
+    }
+  }
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(20000);

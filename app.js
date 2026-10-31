@@ -519,7 +519,7 @@ function showToast(message) {
 
 $("#startBtn").addEventListener("click", () => { goTo(1); });
 $("#howBtn").addEventListener("click", () => $("#helpDialog").showModal());
-(function(){var base=(CONFIG.APPS_SCRIPT_URL||"").trim();["#teacherLink","#teacherLinkFoot"].forEach(function(s){var el=$(s);if(!el)return;if(base){el.href=base+(base.indexOf("?")>-1?"&":"?")+"page=teacher"}else{el.classList.add("disabled");el.removeAttribute("href")}})})();
+(function(){["#teacherLink","#teacherLinkFoot"].forEach(function(s){var el=$(s);if(el)el.href="teacher.html"})})();
 $("#helpBtn").addEventListener("click", () => $("#helpDialog").showModal());
 $("#closeHelp").addEventListener("click", () => $("#helpDialog").close());
 $("#closeHelpBottom").addEventListener("click", () => $("#helpDialog").close());
