@@ -4,7 +4,7 @@
  * Configure APPS_SCRIPT_URL after deploying Code.gs.
  */
 const CONFIG = {
-  APPS_SCRIPT_URL: "", // Paste the deployed Apps Script Web App URL ending in /exec.
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwIwsWkMcgy6PfxOBsuv0owT0wiDnysHWCXbS7FY8prXIKwOU_jrvcGjTwpCAGRy9F6Sg/exec", // Paste the deployed Apps Script Web App URL ending in /exec.
   DRAFT_KEY: "boulevard-store-detective-draft-v1",
   POLL_ATTEMPTS: 8,
   POLL_INTERVAL_MS: 1500
