@@ -312,7 +312,7 @@ function renderResultsStage() {
     </section>
     <div class="soft-notice">هذه النتيجة تقيس المؤشرات الظاهرة التي أمكن فحصها فقط، ولا تعد شهادة تضمن سلامة المتجر. لا تنفذي عملية شراء حقيقية ولا تدخلي بيانات مالية.</div>
     <div class="save-panel"><b>📩 حفظ مشاركة المحققة</b><p>بعد اعتماد التوصية وإكمال تقييم الأقران، أرسلي مشاركتكِ لحفظ بياناتكِ ودرجات المعايير والتقييمات والإنجازات في Google Sheets.</p><div class="stage-actions" style="border:0;padding:0;margin:12px 0 0"><button class="btn btn-print" id="printBtn" type="button">طباعة / PDF</button><button class="btn btn-save" id="saveBtn" type="button" ${state.saving ? "disabled" : ""}>${state.saving ? "جارٍ الحفظ…" : "إرسال وحفظ المشاركة"} ←</button></div><div id="saveStatus" class="save-status" role="status"></div></div>
-    <div class="stage-actions"><button class="btn btn-secondary" data-action="prev" type="button">→ مراجعة التقييم</button><button class="btn btn-secondary" id="copyBtn" type="button">نسخ التقرير</button></div>
+    <div class="stage-actions"><button class="btn btn-secondary" data-action="prev" type="button">→ مراجعة التقييم</button><button class="exit-icon exit-icon-lg js-exit" id="exitBtnResult" type="button" title="خروج من لوحة الطالبة" aria-label="خروج من لوحة الطالبة"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>خروج</span></button><button class="copy-icon" id="copyBtn" type="button" title="نسخ التقرير" aria-label="نسخ التقرير">📋</button></div>
   </div>`;
 }
 function render() {
@@ -654,7 +654,7 @@ function exitStudentPanel() {
   window.scrollTo({ top: 0, behavior: "smooth" });
   showToast("تم الخروج من لوحة الطالبة. نراكِ في مهمة جديدة! 👋");
 }
-["#exitBtnTop", "#exitBtnSide"].forEach(sel => $(sel).addEventListener("click", openExitDialog));
+document.addEventListener("click", e => { if (e.target.closest(".js-exit")) openExitDialog(); });
 $("#exitStay").addEventListener("click", () => $("#exitDialog").close());
 $("#exitConfirm").addEventListener("click", exitStudentPanel);
 
