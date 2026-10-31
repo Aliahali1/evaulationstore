@@ -68,8 +68,8 @@ function setClassAccessCode() {
 
 function setTeacherCode() {
   var code = 'CHANGE-THIS-TEACHER-CODE'; // رمز المعلمة لصفحة الإدارة، يختلف عن رمز الصف
-  if (!code || code === 'CHANGE-THIS-TEACHER-CODE' || code.length < 8) {
-    throw new Error('غيّري قيمة code إلى رمز معلمة قوي (8 أحرف فأكثر) قبل التشغيل.');
+  if (!code || code === 'CHANGE-THIS-TEACHER-CODE' || code.length < 4) {
+    throw new Error('غيّري قيمة code إلى رمز معلمة (يفضّل 8 أحرف فأكثر) قبل التشغيل.');
   }
   PropertiesService.getScriptProperties().setProperty('TEACHER_CODE', code);
   Logger.log('تم حفظ رمز المعلمة.');
@@ -197,11 +197,11 @@ function teacherDelete(code, submissionId) {
 function teacherAuth_(code) {
   var cache = CacheService.getScriptCache();
   var fails = Number(cache.get('teacher_fails') || 0);
-  if (fails >= 8) throw new Error('محاولات كثيرة خاطئة. انتظري 10 دقائق ثم أعيدي المحاولة.');
+  if (fails >= 5) throw new Error('محاولات كثيرة خاطئة. انتظري 30 دقيقة ثم أعيدي المحاولة.');
   var expected = PropertiesService.getScriptProperties().getProperty('TEACHER_CODE');
   if (!expected) throw new Error('لم يُضبط رمز المعلمة بعد (شغّلي setTeacherCode).');
   if (!safeEqual_(String(code || ''), expected)) {
-    cache.put('teacher_fails', String(fails + 1), 600);
+    cache.put('teacher_fails', String(fails + 1), 1800);
     throw new Error('رمز المعلمة غير صحيح.');
   }
   cache.remove('teacher_fails');
