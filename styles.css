@@ -113,3 +113,13 @@ body{background:#cfc2ee}
 @media print{.scene,.scene-caption,.tour-bar{display:none!important}body{background:#fff}}
 
 .teacher-credit{flex-basis:100%;text-align:center;margin-top:10px;padding-top:12px;border-top:1px solid #ffffff88;font-size:14px;color:#3f2f5c}.teacher-credit b{color:#6a3fb0;font-weight:900}
+
+.exit-btn{border:1px solid #e9cfd6;background:#fff;color:#b04a5e;border-radius:30px;padding:8px 13px;font-weight:800;font-size:13px;white-space:nowrap;transition:.2s}
+.exit-btn:hover{background:#fff0f2;border-color:#e3a3b1}
+.exit-side{width:100%;margin-top:12px;border-radius:13px;font-size:12px;padding:9px 10px}
+.exit-dialog{max-width:420px}
+.exit-msg{color:#655972;font-size:13px;line-height:1.9;margin:0 0 16px}
+.exit-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.btn-exit{background:linear-gradient(135deg,#d96a80,#e79a8c);color:#fff;box-shadow:0 8px 18px #d96a8033}
+@media(max-width:700px){.exit-head{display:none}}
+@media print{.exit-btn{display:none!important}}

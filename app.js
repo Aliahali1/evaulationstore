@@ -94,6 +94,7 @@ const state = {
   saving: false
 };
 
+const INITIAL_STATE = JSON.parse(JSON.stringify(state));
 const $ = (selector, root = document) => root.querySelector(selector);
 const stageContent = $("#stageContent");
 
@@ -629,6 +630,33 @@ function fireAxisGlow(index) {
   if (li) li.classList.add("just-done");
   showToast(`✨ اكتمل محور «${AXES[index].short}» — أضاءت المحطة!`);
 }
+
+/* ===== الخروج من لوحة الطالبة: يمسح الجلسة المحلية ويعيد البداية، ولا يمس البيانات المحفوظة في Google Sheets ===== */
+function hasUnsavedWork() {
+  return !!(state.studentName || state.groupName || state.membersText || state.storeName || Object.keys(state.scores).length);
+}
+function openExitDialog() {
+  if (state.saving) { showToast("يرجى الانتظار حتى ينتهي إرسال المشاركة ثم اخرجي."); return; }
+  $("#exitMsg").textContent = hasUnsavedWork()
+    ? "سيتم مسح بياناتكِ وإجاباتكِ غير المرسلة من هذا الجهاز والعودة إلى بوابة المحققة. المشاركات التي أُرسلت وحُفظت سابقًا لا تتأثر."
+    : "ستعودين إلى بوابة المحققة.";
+  $("#exitDialog").showModal();
+}
+function exitStudentPanel() {
+  if (state.saving) return;
+  $("#exitDialog").close();
+  Object.keys(state).forEach(key => delete state[key]);
+  Object.assign(state, JSON.parse(JSON.stringify(INITIAL_STATE)));
+  axisDone.clear();
+  try { localStorage.removeItem(CONFIG.DRAFT_KEY); } catch (_) { /* storage may be disabled */ }
+  render();
+  try { localStorage.removeItem(CONFIG.DRAFT_KEY); } catch (_) { /* storage may be disabled */ }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast("تم الخروج من لوحة الطالبة. نراكِ في مهمة جديدة! 👋");
+}
+["#exitBtnTop", "#exitBtnSide"].forEach(sel => $(sel).addEventListener("click", openExitDialog));
+$("#exitStay").addEventListener("click", () => $("#exitDialog").close());
+$("#exitConfirm").addEventListener("click", exitStudentPanel);
 
 buildTourBar();
 loadDraft();

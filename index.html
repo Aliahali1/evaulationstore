@@ -30,6 +30,7 @@
     </a>
     <div class="header-actions">
       <span class="class-chip"><i></i> ثالث متوسط</span>
+      <button class="exit-btn exit-head" id="exitBtnTop" type="button" title="الخروج من لوحة الطالبة">🚪 خروج</button>
       <a class="teacher-link" id="teacherLink" href="#" target="_blank" rel="noopener" title="لوحة إدارة النتائج (للمعلمة فقط)">🔒 دخول المعلمة</a>
       <button class="icon-button" id="helpBtn" type="button" aria-label="تعليمات">؟</button>
     </div>
@@ -82,6 +83,7 @@
           <div class="side-stat"><span>تقدم المهمة</span><b id="sideProgress">0%</b></div>
           <div class="mini-track"><span id="sideProgressFill"></span></div>
           <div class="side-stat"><span>المعايير المكتملة</span><b id="sideCriteria">0 / 21</b></div>
+          <button class="exit-btn exit-side" id="exitBtnSide" type="button">🚪 خروج من لوحة الطالبة</button>
         </div>
         <div class="side-card score-card">
           <div class="side-card-head"><span class="side-icon gold">✧</span><span>رصيد التحقيق</span></div>
@@ -102,6 +104,11 @@
     <ol><li>سجلي اسمكِ وفصلكِ ومجموعتكِ.</li><li>أدخلي بيانات متجر إلكتروني ستفحصينه.</li><li>انتقلي بين محطات التقييم الخمس، واختاري درجة لكل معيار.</li><li>أضيفي ملاحظاتكِ عند الحاجة.</li><li>راجعي النتيجة وحددي توصيتكِ.</li><li>أرسلي المشاركة لحفظها في سجل المشروع.</li></ol>
     <div class="safety-note">تنبيه: لا تدخلي بيانات شخصية أو بنكية في أي متجر، ولا تنفذي عملية شراء حقيقية. اكتفي بفحص الصفحات العامة.</div>
     <button class="btn btn-primary" id="closeHelpBottom" type="button">فهمت، لنبدأ</button>
+  </dialog>
+  <dialog id="exitDialog" class="help-dialog exit-dialog">
+    <span class="section-kicker">الخروج من لوحة الطالبة</span><h2>هل تريدين الخروج؟</h2>
+    <p id="exitMsg" class="exit-msg"></p>
+    <div class="exit-actions"><button class="btn btn-secondary" id="exitStay" type="button">البقاء في المهمة</button><button class="btn btn-exit" id="exitConfirm" type="button">نعم، خروج</button></div>
   </dialog>
   <script src="app.js"></script>
 </body>
