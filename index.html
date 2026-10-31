@@ -12,6 +12,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- خلفية الجولة: طبقة بصرية مستقلة خلف الاستمارة، تتغير بحسب المرحلة الحالية فقط -->
+  <div class="scene" id="scene" aria-hidden="true">
+    <img class="scene-layer" id="sceneA" alt="" decoding="async">
+    <img class="scene-layer" id="sceneB" alt="" decoding="async">
+    <div class="scene-veil"></div>
+    <div class="scene-sweep" id="sceneSweep"></div>
+    <div class="scene-glow" id="sceneGlow"></div>
+  </div>
+  <div class="scene-caption" id="sceneCaption" role="status" aria-live="polite"></div>
+
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="الصفحة الرئيسية">
@@ -24,6 +34,17 @@
       <button class="icon-button" id="helpBtn" type="button" aria-label="تعليمات">؟</button>
     </div>
   </header>
+
+  <nav class="tour-bar" aria-label="موقعك في جولة بوليفارد الرياض">
+    <div class="tour-inner">
+      <div class="tour-route" id="tourRoute">
+        <span class="tour-line"><span class="tour-fill"></span></span>
+        <span class="tour-pin" aria-hidden="true">🕵🏻‍♀️</span>
+        <ol class="tour-stops" id="tourStops"></ol>
+      </div>
+      <div class="tour-now" id="tourNow"></div>
+    </div>
+  </nav>
 
   <main id="top" class="page-shell">
     <section class="hero" id="hero">

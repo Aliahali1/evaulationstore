@@ -322,6 +322,7 @@ function render() {
   else stageContent.innerHTML = renderResultsStage();
   bindStageEvents();
   persistDraft();
+  updateScene(); updateTourBar(); checkAxisCompletion();
 }
 
 function collectCurrentInputs() {
@@ -523,5 +524,114 @@ $("#helpBtn").addEventListener("click", () => $("#helpDialog").showModal());
 $("#closeHelp").addEventListener("click", () => $("#helpDialog").close());
 $("#closeHelpBottom").addEventListener("click", () => $("#helpDialog").close());
 
+
+/* ===== جولة بوليفارد الرياض: خلفيات المراحل ومسار الرحلة ومؤثر الإضاءة =====
+   طبقة بصرية فقط: لا تقرأ ولا تكتب في بيانات الاستمارة ولا في الدرجات، وتتبع state.stage وحده. */
+const SCENES = [
+  { src: "assets/stage-01-investigator-gate.webp", place: "بوابة المحققة", short: "البوابة" },
+  { src: "assets/stage-02-store-profile.webp", place: "بطاقة تعريف المتجر", short: "المتجر" },
+  { src: "assets/stage-03-market-investigation.webp", place: "جزيرة الأسواق", short: "الأسواق" },
+  { src: "assets/stage-04-shopping-experience.webp", place: "تجربة التسوق", short: "التسوق" },
+  { src: "assets/stage-05-payment-laboratory.webp", place: "مختبر الدفع", short: "الدفع" },
+  { src: "assets/stage-06-security-castle.webp", place: "قلعة الأمان والخصوصية", short: "الأمان" },
+  { src: "assets/stage-07-fraud-detection.webp", place: "كشف الاحتيال الإلكتروني", short: "الاحتيال" },
+  { src: "assets/stage-08-investigation-results.webp", place: "حصيلة التحقيق", short: "الحصيلة" }
+];
+const AXIS_GLOW = ["#ffd98a", "#ff9fd0", "#8fd3ff", "#b9a0ff", "#ffb985"];
+const TOUR_MS = 1900;
+const scene = { a: $("#sceneA"), b: $("#sceneB"), front: null, current: 0, timer: null, token: 0 };
+
+function preloadScene(stage) {
+  const item = SCENES[stage - 1]; if (!item) return;
+  const img = new Image(); img.decoding = "async"; img.src = item.src;
+}
+function settleScene() {
+  clearTimeout(scene.timer); scene.timer = null;
+  [scene.a, scene.b].forEach(layer => { layer.className = "scene-layer" + (layer === scene.front ? " front" : ""); });
+}
+function showCaption(stage) {
+  const el = $("#sceneCaption"); if (!el) return;
+  el.innerHTML = `<span>📍</span><b>${SCENES[stage - 1].place}</b><small>المحطة ${stage} من 8</small>`;
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 3400);
+}
+function updateScene() {
+  if (!scene.a || state.stage === scene.current) return;
+  const stage = state.stage, previous = scene.current, data = SCENES[stage - 1];
+  if (!data) return;
+  scene.current = stage;
+  settleScene();
+  const outgoing = scene.front;
+  const incoming = scene.front === scene.a ? scene.b : scene.a;
+  incoming.src = data.src;
+  if (!outgoing) { scene.front = incoming; settleScene(); }
+  else {
+    const dir = stage > previous ? "fwd" : "back";
+    const token = ++scene.token;
+    const go = () => {
+      if (token !== scene.token) return;
+      scene.front = incoming;
+      incoming.className = `scene-layer enter-${dir}`;
+      outgoing.className = `scene-layer leave-${dir}`;
+      const sweep = $("#sceneSweep"); if (sweep) { sweep.classList.remove("go"); void sweep.offsetWidth; sweep.classList.add("go"); }
+      showCaption(stage);
+      scene.timer = setTimeout(settleScene, TOUR_MS + 80);
+    };
+    (incoming.decode ? incoming.decode() : Promise.resolve()).then(go, go);
+  }
+  preloadScene(stage + 1); preloadScene(stage - 1);
+}
+
+function buildTourBar() {
+  const list = $("#tourStops"); if (!list) return;
+  list.innerHTML = SCENES.map((item, index) => `<li class="tour-stop"><button class="tour-dot" type="button" data-tour="${index + 1}" aria-label="${item.place}"><span></span></button><small>${item.short}</small></li>`).join("");
+  list.addEventListener("click", event => {
+    const dot = event.target.closest("[data-tour]"); if (!dot) return;
+    const target = Number(dot.dataset.tour);
+    if (target < state.stage) goTo(target);
+  });
+}
+function updateTourBar() {
+  const route = $("#tourRoute"); if (!route) return;
+  route.style.setProperty("--p", String((state.stage - 1) / 7));
+  route.querySelectorAll(".tour-stop").forEach((li, index) => {
+    const n = index + 1, dot = li.querySelector(".tour-dot");
+    li.classList.toggle("active", n === state.stage);
+    li.classList.toggle("done", n < state.stage);
+    dot.disabled = n >= state.stage;
+    dot.querySelector("span").textContent = n < state.stage ? "✓" : String(n);
+    if (n === state.stage) dot.setAttribute("aria-current", "step"); else dot.removeAttribute("aria-current");
+  });
+  const now = $("#tourNow");
+  if (now) now.innerHTML = `<b>📍 ${SCENES[state.stage - 1].place}</b><span>المحطة ${state.stage} من 8</span>`;
+}
+
+const axisDone = new Set();
+let axisReady = false;
+function axisIsComplete(axis) { return axis.items.every(([id]) => state.scores[id] !== undefined); }
+function checkAxisCompletion() {
+  AXES.forEach((axis, index) => {
+    const done = axisIsComplete(axis);
+    if (done && !axisDone.has(index)) { axisDone.add(index); if (axisReady) fireAxisGlow(index); }
+    else if (!done) axisDone.delete(index);
+  });
+}
+function fireAxisGlow(index) {
+  const glow = $("#sceneGlow");
+  if (glow) {
+    glow.style.setProperty("--glow", AXIS_GLOW[index]);
+    glow.innerHTML = Array.from({ length: 16 }, (_, i) => `<i style="left:${8 + Math.random() * 60}%;top:${30 + Math.random() * 55}%;animation-delay:${(i * 60)}ms;font-size:${12 + Math.random() * 16}px">✦</i>`).join("");
+    glow.classList.remove("burst"); void glow.offsetWidth; glow.classList.add("burst");
+  }
+  const card = stageContent.querySelector(".stage-card");
+  if (card) { card.style.setProperty("--glow", AXIS_GLOW[index]); card.classList.add("axis-glow"); }
+  const li = document.querySelectorAll(".tour-stop")[index + 2];
+  if (li) li.classList.add("just-done");
+  showToast(`✨ اكتمل محور «${AXES[index].short}» — أضاءت المحطة!`);
+}
+
+buildTourBar();
 loadDraft();
+AXES.forEach((axis, index) => { if (axisIsComplete(axis)) axisDone.add(index); });
 render();
+axisReady = true;
