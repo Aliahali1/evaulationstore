@@ -144,7 +144,7 @@ function bindHowButtons(root) {
 /* ===== الدليل: إلزامي عند التقييم بـ 5 أو 0 ===== */
 function hasEvidence(text) {
   const t = String(text || "").trim();
-  return t.length >= 10 && t.split(/\s+/).filter(Boolean).length >= 2;
+  return t.length >= 2; // تكفي كلمة واحدة
 }
 function needsEvidence(id) { return state.scores[id] === 5 || state.scores[id] === 0; }
 function missingEvidenceIds() { return allCriteria().filter(c => needsEvidence(c.id) && !hasEvidence(state.notes[c.id])).map(c => c.id); }

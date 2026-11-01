@@ -250,7 +250,7 @@ function renderAxisStage(axisIndex) {
         <div class="score-options" role="radiogroup" aria-label="تقييم المعيار ${i + 1}">
           ${scoreLabels.map(option => `<div class="score-option ${option.cls}"><input type="radio" id="${id}-${option.value}" name="score-${id}" value="${option.value}" ${String(state.scores[id]) === option.value ? "checked" : ""}><label for="${id}-${option.value}"><b>${option.value === "NA" ? "—" : option.value}</b><small>${option.name}</small></label></div>`).join("")}
         </div>
-        <div class="note-wrap"><input class="note-input" data-note="${id}" maxlength="500" placeholder="${needsEvidence(id) ? "الدليل مطلوب: ماذا شاهدتِ؟ وأين؟" : "الدليل أو الملاحظة (يُنصح بها)"}" value="${escapeHtml(state.notes[id] || "")}">${needsEvidence(id) ? `<small class="evidence-msg">${icon("warn")} التقييم بـ 5 أو 0 يحتاج دليلًا مكتوبًا (جملة قصيرة من كلمتين على الأقل).</small>` : ""}</div>
+        <div class="note-wrap"><input class="note-input" data-note="${id}" maxlength="500" placeholder="${needsEvidence(id) ? "الدليل مطلوب: ماذا شاهدتِ؟ وأين؟" : "الدليل أو الملاحظة (يُنصح بها)"}" value="${escapeHtml(state.notes[id] || "")}">${needsEvidence(id) ? `<small class="evidence-msg">${icon("warn")} التقييم بـ 5 أو 0 يحتاج دليلًا مكتوبًا (تكفي كلمة واحدة، مثل: «https» أو «سياسة»).</small>` : ""}</div>
       </article>`).join("")}</div>
     <div class="axis-bottom"><span>المعايير المكتملة: ${complete} من ${axis.items.length}</span><span class="axis-score">${axisScore} / ${axisDenom || axis.max} درجة محتسبة</span></div>
     ${stageActions(true, true, axisIndex === 4 ? "عرض النتيجة النهائية" : "المحطة التالية")}
