@@ -492,13 +492,21 @@ async function saveSubmission() {
       method: "POST", mode: "no-cors", redirect: "follow",
       headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body
     });
-    await confirmSaved(CONFIG.APPS_SCRIPT_URL, payload.submissionId);
+    try {
+      await confirmSaved(CONFIG.APPS_SCRIPT_URL, payload.submissionId);
+    } catch (verifyError) {
+      // Fallback: re-send the same submission with a readable (CORS) POST. The server de-duplicates by
+      // submissionId, so this is safe and answers {ok:true, duplicate:true} when the row already exists.
+      const res = await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", credentials: "omit", redirect: "follow", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body });
+      const reply = await res.json();
+      if (!reply || reply.ok !== true) throw new Error(reply && reply.error ? "رفض الخادم الحفظ: " + reply.error + "." : "لم يصل تأكيد من Google Sheets.");
+    }
     setSaveStatus("تم حفظ مشاركتكِ بنجاح في سجل المشروع. أحسنتِ يا محققة!", "success");
     showToast("وصلت مشاركتكِ بنجاح إلى سجل المشروع ✨");
     localStorage.removeItem(CONFIG.DRAFT_KEY);
     state.submissionId = null;
   } catch (error) {
-    setSaveStatus(`${error.message} لم نحذف إجاباتكِ؛ يمكنك إعادة المحاولة.`, "error");
+    const reason = /[\u0600-\u06FF]/.test(error.message) ? error.message : "تعذر الاتصال بخدمة Google (قد تحجبها الشبكة)."; setSaveStatus(`${reason} لم نحذف إجاباتكِ؛ اضغطي «إرسال» مرة أخرى (لن تتكرر المشاركة)، وإن استمر الخطأ فجرّبي شبكة أخرى أو أخبري المعلمة.`, "error");
   } finally {
     state.saving = false;
     const save = $("#saveBtn"); if (save) { save.disabled = false; save.textContent = "إرسال وحفظ المشاركة ←"; }
