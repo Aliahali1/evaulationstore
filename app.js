@@ -202,7 +202,7 @@ function renderStudentStage() {
       <div class="field"><label for="className">الفصل *</label><select id="className">${[1,2,3,4,5,6].map(n => `<option value="ثالث ${n}" ${state.className === `ثالث ${n}` ? "selected" : ""}>ثالث ${n}</option>`).join("")}</select><small class="field-help">اختاري فصلكِ من القائمة.</small></div>
       <div class="field"><label for="groupName">اسم المجموعة *</label><input id="groupName" maxlength="60" placeholder="مثال: المحققات الذهبيات" value="${escapeHtml(state.groupName)}"></div>
       <div class="field full"><label for="membersText">أسماء زميلات المجموعة *</label><textarea id="membersText" maxlength="500" placeholder="اكتبي اسم كل زميلة في سطر مستقل">${escapeHtml(state.membersText)}</textarea><small class="field-help">ستظهر الأسماء في قسم تقييم الأقران، ولن تتمكني من تقييم نفسكِ.</small></div>
-      <div class="field full"><label for="accessCode">رمز دخول الصف (إن زودتكِ به المعلمة)</label><input id="accessCode" maxlength="60" autocomplete="off" placeholder="اتركيه فارغًا إذا لم يُطلب منكِ" value="${escapeHtml(state.accessCode)}"><small class="field-help">يستخدم الرمز عند تفعيله من إعدادات المشروع لحماية المشاركات من الإرسال العشوائي.</small></div>
+      <div class="field full"><label for="accessCode">رمز دخول الصف (اطلبيه من المعلمة) *</label><input id="accessCode" maxlength="60" autocomplete="off" placeholder="اكتبي رمز الصف الذي أعطته لكِ المعلمة" value="${escapeHtml(state.accessCode)}"><small class="field-help">يستخدم الرمز عند تفعيله من إعدادات المشروع لحماية المشاركات من الإرسال العشوائي.</small></div>
     </div>
     <div class="soft-notice">✨ مهمتكِ: فحص متجر إلكتروني، وتوثيق ما تشاهدينه، ثم إصدار حكم مستند إلى الأدلة. لا تشاركي أي معلومات شخصية أو مالية.</div>
     ${stageActions(false, true, "الانتقال إلى بيانات المتجر")}
@@ -412,6 +412,9 @@ function bindStageEvents() {
   if (printBtn) printBtn.addEventListener("click", () => window.print());
 }
 
+function normalizeCode(v) {
+  return String(v || "").replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x0660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x06F0).replace(/\s+/g, "").trim();
+}
 function makePayload() {
   return {
     submissionId: state.submissionId || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : `sub-${Date.now()}-${Math.random().toString(36).slice(2, 14)}`),
@@ -421,7 +424,7 @@ function makePayload() {
     members: getMembers(),
     peerAssessments: getMembers().map(peerName => ({ peerName, scores: state.peerAssessments[peerName]?.scores || {}, positive: state.peerAssessments[peerName]?.positive || "", suggestion: state.peerAssessments[peerName]?.suggestion || "" })),
     achievements: { points: achievementPoints(), badges: achievementBadges().filter(b => b.unlocked).map(b => b.title) },
-    accessCode: state.accessCode,
+    accessCode: normalizeCode(state.accessCode),
     storeName: state.storeName,
     storeUrl: state.storeUrl,
     productType: state.productType,
@@ -474,6 +477,7 @@ async function saveSubmission() {
     setSaveStatus("أضيفي رابط Google Apps Script المنشور داخل CONFIG في ملف app.js أولًا.", "error");
     return;
   }
+  if (!normalizeCode(state.accessCode)) { setSaveStatus("رمز دخول الصف مطلوب للإرسال. ارجعي إلى المحطة الأولى (بوابة المحققة) واكتبي الرمز الذي أعطته لكِ المعلمة.", "error"); return; }
   if (!state.recommendation) { setSaveStatus("اختاري التوصية النهائية أولًا.", "error"); return; }
   if (getDenominator() === 0) { setSaveStatus("لا يمكن حفظ النتيجة؛ يجب أن يوجد معيار واحد على الأقل قابل للتقييم.", "error"); return; }
   if (getMissing()) { setSaveStatus("توجد معايير لم يتم تقييمها بعد.", "error"); return; }
@@ -499,7 +503,7 @@ async function saveSubmission() {
       // submissionId, so this is safe and answers {ok:true, duplicate:true} when the row already exists.
       const res = await fetch(CONFIG.APPS_SCRIPT_URL, { method: "POST", credentials: "omit", redirect: "follow", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body });
       const reply = await res.json();
-      if (!reply || reply.ok !== true) throw new Error(reply && reply.error ? "رفض الخادم الحفظ: " + reply.error + "." : "لم يصل تأكيد من Google Sheets.");
+      if (!reply || reply.ok !== true) throw new Error(reply && reply.error ? (reply.error === "invalid_access_code" ? "رمز دخول الصف غير صحيح. ارجعي إلى المحطة الأولى (بوابة المحققة) وصحّحي الرمز، أو اسألي المعلمة عنه." : "رفض الخادم الحفظ: " + reply.error + ".") : "لم يصل تأكيد من Google Sheets.");
     }
     setSaveStatus("تم حفظ مشاركتكِ بنجاح في سجل المشروع. أحسنتِ يا محققة!", "success");
     showToast("وصلت مشاركتكِ بنجاح إلى سجل المشروع ✨");
