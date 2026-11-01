@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261101">
+  <link rel="stylesheet" href="styles.css?v=20261101b">
 </head>
 <body>
   <!-- خلفية الجولة: طبقة بصرية مستقلة خلف الاستمارة، تتغير بحسب المرحلة الحالية فقط -->
@@ -31,7 +31,8 @@
     <div class="header-actions">
       <span class="class-chip"><i></i> ثالث متوسط</span>
       <button class="exit-icon js-exit" id="exitBtnTop" type="button" title="خروج من لوحة الطالبة" aria-label="خروج من لوحة الطالبة"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
-      <a class="teacher-link" id="teacherLink" href="#" target="_blank" rel="noopener" title="لوحة إدارة النتائج (للمعلمة فقط)">🔒 دخول المعلمة</a>
+      <a class="teacher-link" id="teacherLink" href="#" target="_blank" rel="noopener" title="لوحة إدارة النتائج (للمعلمة فقط)"><span class="ico-slot" data-ico="lock"></span> دخول المعلمة</a>
+      <button class="icon-button sound-btn" id="soundBtn" type="button" aria-label="كتم الأصوات" title="كتم الأصوات"></button>
       <button class="icon-button" id="helpBtn" type="button" aria-label="تعليمات">؟</button>
     </div>
   </header>
@@ -40,7 +41,7 @@
     <div class="tour-inner">
       <div class="tour-route" id="tourRoute">
         <span class="tour-line"><span class="tour-fill"></span></span>
-        <span class="tour-pin" aria-hidden="true">🕵🏻‍♀️</span>
+        <span class="tour-pin" aria-hidden="true"><span class="ico-slot" data-ico="detective"></span></span>
         <ol class="tour-stops" id="tourStops"></ol>
       </div>
       <div class="tour-now" id="tourNow"></div>
@@ -51,7 +52,7 @@
     <section class="hero" id="hero">
       <div class="hero-shade"></div>
       <div class="hero-content">
-        <span class="eyebrow"><span class="sparkle">✦</span> مهمة استقصاء رقمية</span>
+        <span class="eyebrow"><span class="sparkle"><span class="ico-slot" data-ico="sparkles"></span></span> مهمة استقصاء رقمية</span>
         <h1>مغامرة محققة<br><em>المتجر الإلكتروني</em></h1>
         <p>جولتكِ في أسواق بوليفارد الرياض تبدأ بسؤال واحد:<br><strong>هل يستحق هذا المتجر ثقتنا؟</strong></p>
         <div class="hero-buttons">
@@ -59,7 +60,7 @@
           <button class="btn btn-glass" id="howBtn" type="button">كيف أشارك؟</button>
         </div>
         <div class="hero-mini-stats">
-          <span>21 معيارًا للفحص</span><b>✦</b><span>5 محطات تحقيق</span><b>✦</b><span>تقريركِ في النهاية</span>
+          <span>21 معيارًا للفحص</span><b><span class="ico-slot" data-ico="star"></span></b><span>5 محطات تحقيق</span><b><span class="ico-slot" data-ico="star"></span></b><span>تقريركِ في النهاية</span>
         </div>
       </div>
       <div class="hero-character-note"><span class="pulse-dot"></span> مهمتكِ: افحصي، وثّقي، ثم أصدري الحكم</div>
@@ -75,8 +76,8 @@
       <div class="workspace-main" id="stageContent" aria-live="polite"></div>
       <aside class="side-panel">
         <div class="side-card mission-card">
-          <div class="side-card-head"><span class="side-icon">✦</span><span>بطاقة المحققة</span></div>
-          <div class="avatar-orbit"><div class="avatar">🕵🏻‍♀️</div><span class="orbit-star star-a">✧</span><span class="orbit-star star-b">✦</span></div>
+          <div class="side-card-head"><span class="side-icon"><span class="ico-slot" data-ico="sparkles"></span></span><span>بطاقة المحققة</span></div>
+          <div class="avatar-orbit"><div class="avatar"><span class="ico-slot" data-ico="detective"></span></div><span class="orbit-star star-a"><span class="ico-slot" data-ico="star"></span></span><span class="orbit-star star-b"><span class="ico-slot" data-ico="sparkles"></span></span></div>
           <h3 id="sideStudent">المحققة الجديدة</h3>
           <p id="sideClass">الفصل: لم يحدد بعد</p>
           <div class="mini-divider"></div>
@@ -86,30 +87,35 @@
           <button class="exit-pill js-exit" id="exitBtnSide" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>خروج من لوحة الطالبة</span></button>
         </div>
         <div class="side-card score-card">
-          <div class="side-card-head"><span class="side-icon gold">✧</span><span>رصيد التحقيق</span></div>
+          <div class="side-card-head"><span class="side-icon gold"><span class="ico-slot" data-ico="star"></span></span><span>رصيد التحقيق</span></div>
           <div class="score-number"><strong id="sideScore">—</strong><small>نقطة</small></div>
           <p>تُحتسب النتيجة بعد تقييم معايير المتجر.</p>
         </div>
-        <div class="side-tip"><span>💡</span><p><b>تلميح المحققة</b><br><span id="tipText">لا تحكمي على المتجر من شكله فقط؛ ابحثي عن دليل يدعم كل ملاحظة.</span></p></div>
+        <div class="side-tip"><span><span class="ico-slot" data-ico="bulb"></span></span><p><b>تلميح المحققة</b><br><span id="tipText">لا تحكمي على المتجر من شكله فقط؛ ابحثي عن دليل يدعم كل ملاحظة.</span></p></div>
       </aside>
     </section>
 
-    <footer class="site-footer"><span>مشروع الوحدة الثالثة · التجارة الإلكترونية</span><span>مادة المهارات الرقمية · الصف الثالث المتوسط</span><span>✦ تعلمي بذكاء، وتسوقي بأمان</span><span class="teacher-credit">إشراف وتنفيذ: المعلمة <b>عالية اليامي</b></span><a class="teacher-link teacher-link-foot" id="teacherLinkFoot" href="#" target="_blank" rel="noopener">دخول المعلمة</a></footer>
+    <footer class="site-footer"><span>مشروع الوحدة الثالثة · التجارة الإلكترونية</span><span>مادة المهارات الرقمية · الصف الثالث المتوسط</span><span><span class="ico-slot" data-ico="sparkles"></span> تعلمي بذكاء، وتسوقي بأمان</span><span class="teacher-credit">إشراف وتنفيذ: المعلمة <b>عالية اليامي</b></span><a class="teacher-link teacher-link-foot" id="teacherLinkFoot" href="#" target="_blank" rel="noopener">دخول المعلمة</a></footer>
   </main>
 
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
   <dialog id="helpDialog" class="help-dialog">
     <button class="dialog-close" id="closeHelp" type="button" aria-label="إغلاق">×</button>
     <span class="section-kicker">دليل المشاركة</span><h2>كيف تنفذين المهمة؟</h2>
-    <ol><li>سجلي اسمكِ وفصلكِ ومجموعتكِ.</li><li>أدخلي بيانات متجر إلكتروني ستفحصينه.</li><li>انتقلي بين محطات التقييم الخمس، واختاري درجة لكل معيار.</li><li>أضيفي ملاحظاتكِ عند الحاجة.</li><li>راجعي النتيجة وحددي توصيتكِ.</li><li>أرسلي المشاركة لحفظها في سجل المشروع.</li></ol>
+    <ol class="steps-list"><li>سجلي اسمكِ وفصلكِ ومجموعتكِ.</li><li>أنهي المستوى التدريبي، ثم أدخلي بيانات متجر إلكتروني ستفحصينه.</li><li>انتقلي بين محطات التقييم الخمس، واختاري درجة لكل معيار.</li><li>أضيفي ملاحظاتكِ عند الحاجة.</li><li>راجعي النتيجة وحددي توصيتكِ.</li><li>أرسلي المشاركة لحفظها في سجل المشروع.</li></ol>
+    <h3 class="outcomes-title">نواتج التعلم: بنهاية المهمة ستكونين قادرة على أن:</h3>
+    <ol class="outcomes-list"><li>تفحصي عنوان المتجر وتتحققي من استخدام HTTPS عند توفره.</li><li>تبحثي عن شهادات أو شعارات ثقة يمكن التحقق من مصدرها، وتكتبي الدليل.</li><li>تبحثي عن سياسة واضحة وتقرئي ما يتعلق بالمعلومات الشخصية.</li><li>تتحققي من وضوح معلومات البائع والتواصل والشروط، وتسجلي ما وجدتِه.</li><li>تفحصي السعر المبالغ في انخفاضه والعروض المريبة والروابط المشبوهة، وتسجلي إشارة التحذير.</li><li>تربطي قرار التوصية للمتجر بالأدلة السابقة.</li></ol>
+    <p class="field-help">قبل المتجر الحقيقي ستتدربين على متجرين وهميين. وفي كل معيار زر «كيف أتحقق؟» يرشدكِ، والدليل مطلوب عند التقييم بـ 5 أو 0. في النهاية يظهر لكِ ملخص إتقانكِ.</p>
     <div class="safety-note">تنبيه: لا تدخلي بيانات شخصية أو بنكية في أي متجر، ولا تنفذي عملية شراء حقيقية. اكتفي بفحص الصفحات العامة.</div>
     <button class="btn btn-primary" id="closeHelpBottom" type="button">فهمت، لنبدأ</button>
   </dialog>
+  <dialog id="trainDialog" class="help-dialog train-dialog" aria-label="المستوى التدريبي"></dialog>
   <dialog id="exitDialog" class="help-dialog exit-dialog">
     <span class="section-kicker">الخروج من لوحة الطالبة</span><h2>هل تريدين الخروج؟</h2>
     <p id="exitMsg" class="exit-msg"></p>
     <div class="exit-actions"><button class="btn btn-secondary" id="exitStay" type="button">البقاء في المهمة</button><button class="btn btn-exit" id="exitConfirm" type="button">نعم، خروج</button></div>
   </dialog>
-  <script src="app.js?v=20261101"></script>
+  <script src="extras.js?v=20261101b"></script>
+  <script src="app.js?v=20261101b"></script>
 </body>
 </html>

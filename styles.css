@@ -135,3 +135,111 @@ body{background:#cfc2ee}
 
 .workspace.no-side .side-panel{display:none!important}
 .workspace.no-side{grid-template-columns:minmax(0,1fr)}
+
+/* ===== أيقونات SVG ===== */
+.ico{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.16em;flex:none}
+.ico-slot{display:inline-flex;align-items:center;justify-content:center}
+.stage-icon{color:#7453bd}.stage-icon .ico{width:26px;height:26px}
+.avatar{display:grid;place-items:center;color:#7453bd}.avatar .ico{width:46px;height:46px;stroke-width:1.7}
+.tour-pin{color:#fff;background:linear-gradient(135deg,#8f6bd0,#6fb6dc);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:17px;margin-inline-start:-15px;top:-18px;box-shadow:0 4px 10px #5a3e9a55}
+.side-icon .ico{width:16px;height:16px}
+.side-tip>span{color:#c08a1f;font-size:20px;display:grid;place-items:start}
+.result-medal{color:#8a5a0c}.result-medal .ico{width:42px;height:42px;stroke-width:1.7}
+.badge-tile>span{display:grid;place-items:center;font-size:24px;color:#7c5cc0}
+.badge-tile.locked>span{opacity:.45;filter:grayscale(1)}
+.node-circle .ico{width:16px;height:16px;stroke-width:2.6}
+.tour-dot .ico{width:14px;height:14px;stroke-width:2.8}
+.scene-caption .ico,.tour-now .ico{color:#e46a86;width:15px;height:15px}
+.scene-glow i{display:inline-block;color:var(--glow,#ffd98e)}.scene-glow i .ico{width:1em;height:1em;fill:currentColor;stroke:none}
+.soft-notice .ico{color:#8a63cc;margin-inline-end:4px}
+.hero-mini-stats b .ico{width:14px;height:14px}
+.sparkle .ico{width:18px;height:18px;vertical-align:-.25em}
+.orbit-star .ico{width:15px;height:15px}
+.teacher-link .ico{margin-inline-end:4px}
+.sound-btn{display:inline-grid;place-items:center}.sound-btn .ico{width:18px;height:18px}.sound-btn.is-muted{color:#a79bb8;background:#f4f0f8}
+.toast{max-width:90vw}
+
+/* ===== كيف أتحقق؟ ===== */
+.criterion-top{flex-wrap:wrap}
+.criterion-text{flex:1 1 220px}
+.how-btn{display:inline-flex;align-items:center;gap:5px;margin-inline-start:auto;border:1px solid #d9cdf0;background:#f7f2ff;color:#6f4fb3;border-radius:20px;padding:5px 11px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;transition:.2s}
+.how-btn:hover,.how-btn[aria-expanded="true"]{background:#7453bd;color:#fff;border-color:#7453bd}
+.how-btn .ico{width:15px;height:15px}
+.how-panel{margin:10px 0 2px;background:linear-gradient(135deg,#f8f4ff,#f1f9ff);border:1px dashed #cdbcec;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.8;animation:howIn .25s ease}
+.how-panel[hidden]{display:none}
+.how-row{margin-bottom:6px}.how-row b{display:flex;align-items:center;gap:6px;color:#5d3f9f;font-size:12.5px}.how-row b .ico{width:15px;height:15px}
+.how-row p{margin:2px 0 0;color:#4b3d63}
+.how-panel small{color:#8a7fa0}
+@keyframes howIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* ===== الدليل الإلزامي ===== */
+.criterion-card.needs-evidence{border-color:#e9a3b3;box-shadow:0 0 0 3px #f6d3da66}
+.criterion-card.needs-evidence .note-input{border-color:#e08da1;background:#fff8fa}
+.criterion-card.evidence-ok .note-input{border-color:#7fc9ac;background:#f6fffb}
+.evidence-msg{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:11.5px;color:#b0485e}
+.criterion-card.evidence-ok .evidence-msg{display:none}
+.evidence-msg .ico{width:14px;height:14px}
+
+/* ===== المستوى التدريبي ===== */
+.train-card{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#fff7e6,#f7f1ff);border:1px solid #f0dcaa;border-radius:18px;padding:14px 16px;margin:14px 0}
+.train-card.done{background:linear-gradient(135deg,#eafaf3,#f1f9ff);border-color:#bfe7d6}
+.train-ico{width:46px;height:46px;border-radius:15px;background:#fff;display:grid;place-items:center;color:#b07a14;box-shadow:0 4px 12px #0001}.train-card.done .train-ico{color:#2f9a74}.train-ico .ico{width:25px;height:25px}
+.train-text{flex:1 1 220px}.train-text b{font-size:14px}.train-text p{margin:3px 0;font-size:12.5px;color:#655972;line-height:1.7}.train-text small{color:#8a7fa0}
+.train-dialog{max-width:760px;max-height:90vh;overflow:auto}
+.train-dialog::-webkit-scrollbar{width:8px}.train-dialog::-webkit-scrollbar-thumb{background:#d6c9ee;border-radius:8px}
+.train-progress{height:8px;background:#efeaf6;border-radius:8px;overflow:hidden;margin:12px 0 4px}.train-progress span{display:block;height:100%;background:linear-gradient(90deg,#8f6bd0,#6fb6dc);transition:width .4s}
+.train-store{margin-top:20px;padding-top:6px;border-top:1px solid #eee8f5}
+.train-store h4{display:flex;align-items:center;gap:8px;margin:12px 0}
+.train-num{width:26px;height:26px;border-radius:50%;background:#7453bd;color:#fff;display:grid;place-items:center;font-size:13px}
+.mock-store{margin:0 0 12px;border:1px solid #d9d2e6;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 8px 22px #4b31711a;font-size:12px}
+.mock-bar{display:flex;align-items:center;gap:10px;background:#eceaf2;padding:8px 10px}
+.mock-dots{display:flex;gap:4px}.mock-dots i{width:8px;height:8px;border-radius:50%;background:#c5bfd3}
+.mock-url{flex:1;display:flex;align-items:center;gap:6px;background:#fff;border-radius:20px;padding:4px 10px;font-size:11.5px;direction:ltr;overflow:hidden;white-space:nowrap}
+.mock-url span{overflow:hidden;text-overflow:ellipsis}.mock-url em{font-style:normal;margin-inline-start:auto;background:#fde3e7;color:#b0243d;border-radius:10px;padding:1px 7px;font-size:10.5px;font-weight:800}
+.mock-store.safe .mock-url .ico{color:#2f9a74}.mock-store.risky .mock-url .ico{color:#c9304c}
+.mock-page{padding:12px 14px}
+.mock-brand{font-weight:900;font-size:15px;color:#35294b;margin-bottom:8px}
+.mock-store.risky .mock-brand{color:#d11b3a;font-family:Impact,Tahoma,sans-serif;letter-spacing:1px}
+.mock-banner{border-radius:10px;padding:12px;text-align:center;margin-bottom:10px;display:flex;flex-direction:column;gap:3px}
+.mock-store.safe .mock-banner{background:linear-gradient(135deg,#efe6ff,#e0f2fb);color:#4a3a73}
+.mock-store.risky .mock-banner{background:repeating-linear-gradient(45deg,#ffe14d,#ffe14d 10px,#ffce1f 10px,#ffce1f 20px);color:#c00018}
+.mock-banner b{font-size:15px}.mock-banner small{font-size:11px}
+.mock-items{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mock-item{border:1px solid #eee8f5;border-radius:10px;padding:7px;display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center}
+.mock-img{width:100%;height:42px;border-radius:7px;background:linear-gradient(135deg,#e8dcff,#d8f2ff)}
+.mock-store.risky .mock-img{background:linear-gradient(135deg,#ffd6d6,#fff1b8)}
+.mock-price{font-weight:900;color:#2f7d62}.mock-store.risky .mock-price{color:#d11b3a;font-size:14px}
+.mock-item small{color:#a0475a;font-size:10.5px}
+.mock-footer{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:10px;padding-top:8px;border-top:1px dashed #e4ddf0;color:#7b6f8f;font-size:11px}
+.mock-store.risky .mock-footer{color:#8a2a3a}
+.mock-store figcaption{background:#f6f2fb;color:#8a7fa0;font-size:11px;text-align:center;padding:5px}
+.tq{padding:10px 12px;border:1px solid #eee8f5;border-radius:12px;margin-bottom:8px;background:#fff}
+.tq p{margin:0 0 7px;font-weight:700;font-size:13px}
+.tq-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tq-btn{border:1px solid #dcd2ee;background:#faf7ff;color:#5d3f9f;border-radius:20px;padding:6px 16px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;transition:.2s}
+.tq-btn:hover:not(:disabled){background:#7453bd;color:#fff}.tq-btn:disabled{cursor:default;opacity:.6}.tq-btn.picked{opacity:1;background:#7453bd;color:#fff}
+.tq.right{border-color:#a9dfc8;background:#f6fffb}.tq.wrong{border-color:#efb2bd;background:#fff8fa}
+.tq-fb{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:12.5px;line-height:1.7;color:#4b3d63}
+.tq.right .tq-fb .ico{color:#2f9a74}.tq.wrong .tq-fb .ico{color:#c9304c}.tq-fb .ico{width:18px;height:18px;margin-top:2px;stroke-width:2.6}
+.tq.verdict.locked{opacity:.65}
+.train-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:12px;border-top:1px solid #eee8f5}
+.train-result{display:flex;gap:10px;align-items:center;font-size:13px;flex:1 1 240px}.train-result .ico{width:30px;height:30px;color:#c08a1f}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+/* ===== ملخص الإتقان ===== */
+.mastery-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.mastery-head h4{display:flex;align-items:center;gap:7px}
+.mastery-level{text-align:center;background:linear-gradient(135deg,#8f6bd0,#6fb6dc);color:#fff;border-radius:16px;padding:8px 18px;min-width:110px}.mastery-level b{display:block;font-size:18px}.mastery-level small{opacity:.9}
+.outcome-row{display:flex;gap:10px;align-items:center;padding:9px 4px;border-top:1px dashed #e9e2f3;font-size:13px}
+.outcome-row>div{flex:1}.outcome-row small{display:block;color:#81778f;font-size:11.5px;margin-top:2px}
+.outcome-mark{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#f0edf5;color:#81778f;flex:none}.outcome-mark .ico{width:17px;height:17px;stroke-width:2.4}
+.outcome-row.high .outcome-mark{background:#ddf5ed;color:#2f9a74}.outcome-row.mid .outcome-mark{background:#fff3d9;color:#b98524}.outcome-row.low .outcome-mark{background:#fde8ec;color:#b3505d}
+.outcome-pct{font-weight:900;color:#6a5888;direction:ltr;min-width:44px;text-align:end}
+
+/* ===== نواتج التعلم في الدليل ===== */
+.help-dialog{max-height:92vh;overflow:auto}
+.outcomes-title{font-size:14px;margin:14px 0 6px;color:#5d3f9f}
+.outcomes-list{margin:0 0 10px;padding-inline-start:20px;font-size:13px;line-height:1.9}
+@media(max-width:700px){.mock-items{grid-template-columns:repeat(3,1fr);gap:5px}.mock-item{padding:5px}.mock-brand{font-size:13px}.train-dialog{padding:18px}.how-btn{margin-inline-start:0}}
+@media print{.how-btn,.how-panel,.train-card,.sound-btn{display:none!important}}
+@media(prefers-reduced-motion:reduce){.how-panel{animation:none}}

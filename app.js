@@ -13,7 +13,7 @@ const CONFIG = {
 
 const AXES = [
   {
-    id: "market", title: "المحور الأول: واجهة المتجر وجودة عرض المنتجات", short: "واجهة المتجر", place: "جزيرة الأسواق", icon: "🏬", max: 25,
+    id: "market", title: "المحور الأول: واجهة المتجر وجودة عرض المنتجات", short: "واجهة المتجر", place: "جزيرة الأسواق", icon: "store", max: 25,
     intro: "تجوّلي في واجهة المتجر، وتأكدي من وضوح هويته وطريقة عرض منتجاته.",
     items: [
       ["m1", "وضوح اسم المتجر وهويته التجارية."],
@@ -24,7 +24,7 @@ const AXES = [
     ]
   },
   {
-    id: "shopping", title: "المحور الثاني: تجربة التسوق وإدارة الطلبات", short: "تجربة التسوق", place: "جزيرة المشتريات", icon: "🛍️", max: 20,
+    id: "shopping", title: "المحور الثاني: تجربة التسوق وإدارة الطلبات", short: "تجربة التسوق", place: "جزيرة المشتريات", icon: "bag", max: 20,
     intro: "افحصي رحلة العميل من اختيار المنتج إلى مراجعة السلة والشحن.",
     items: [
       ["s1", "إمكانية إضافة المنتج إلى سلة المشتريات وتعديل الكمية أو حذف المنتج."],
@@ -34,7 +34,7 @@ const AXES = [
     ]
   },
   {
-    id: "payment", title: "المحور الثالث: وسائل الدفع الإلكتروني", short: "الدفع الإلكتروني", place: "مختبر الدفع", icon: "💳", max: 15,
+    id: "payment", title: "المحور الثالث: وسائل الدفع الإلكتروني", short: "الدفع الإلكتروني", place: "مختبر الدفع", icon: "card", max: 15,
     intro: "تحققي من طرق الدفع المعروضة ووضوح المبلغ والرسوم قبل الشراء.",
     items: [
       ["p1", "وضوح طرق الدفع المتاحة للعميل."],
@@ -43,7 +43,7 @@ const AXES = [
     ]
   },
   {
-    id: "security", title: "المحور الرابع: الأمان والخصوصية وإشارات الثقة", short: "الأمان والخصوصية", place: "قلعة الأمان", icon: "🛡️", max: 25,
+    id: "security", title: "المحور الرابع: الأمان والخصوصية وإشارات الثقة", short: "الأمان والخصوصية", place: "قلعة الأمان", icon: "shield", max: 25,
     intro: "ابحثي عن مؤشرات الاتصال الآمن والخصوصية والحماية، ولا تعتبري مؤشرًا واحدًا ضمانًا للثقة.",
     items: [
       ["c1", "استخدام اتصال آمن HTTPS وظهور رمز القفل في عنوان الموقع."],
@@ -54,7 +54,7 @@ const AXES = [
     ]
   },
   {
-    id: "fraud", title: "المحور الخامس: اكتشاف علامات الاحتيال الإلكتروني", short: "كشف الاحتيال", place: "محطة كشف الاحتيال", icon: "🔎", max: 20,
+    id: "fraud", title: "المحور الخامس: اكتشاف علامات الاحتيال الإلكتروني", short: "كشف الاحتيال", place: "محطة كشف الاحتيال", icon: "scan", max: 20,
     intro: "ابحثي عن إشارات التحذير الظاهرة في عنوان الموقع والعروض والتصميم ووسائل التواصل.",
     items: [
       ["f1", "خلو عنوان الموقع من الأحرف أو الكلمات الغريبة والعناوين المضللة."],
@@ -91,6 +91,7 @@ const state = {
   notes: {},
   peerAssessments: {},
   recommendation: "",
+  training: {},
   submissionId: null,
   saving: false
 };
@@ -120,21 +121,21 @@ function peerEvaluationComplete(name) {
   return !!record && ["contribution", "role", "collaboration", "ideas", "respect"].every(key => record.scores && record.scores[key] !== undefined);
 }
 function peerComplete() { const members = getMembers(); return members.length > 0 && members.every(peerEvaluationComplete); }
-function evidenceCount() { return Object.values(state.notes).filter(value => String(value || "").trim().length >= 8).length; }
+function evidenceCount() { return Object.values(state.notes).filter(hasEvidence).length; }
 function achievementPoints() {
   const identity = state.studentName && state.storeName ? 10 : 0;
   const axes = AXES.reduce((sum, axis) => sum + (axis.items.every(([id]) => state.scores[id] !== undefined) ? 15 : 0), 0);
-  const evidence = evidenceCount() >= 3 ? 10 : 0;
+  const evidence = evidenceCount() >= 3 && missingEvidenceIds().length === 0 ? 10 : 0;
   const peers = peerComplete() ? 5 : 0;
   return { identity, axes, evidence, peers, total: identity + axes + evidence + peers };
 }
 function achievementBadges() {
   const points = achievementPoints();
-  const badges = [{ title: "محققة البداية", icon: "🔎", unlocked: points.identity === 10, desc: "أكملتِ بيانات المهمة." },
-    { title: "عين الصقر", icon: "🦅", unlocked: points.axes === 75, desc: "أتممتِ تقييم المحاور الخمسة." },
-    { title: "جامعة الأدلة", icon: "💎", unlocked: points.evidence === 10, desc: "وثّقتِ ثلاث ملاحظات أو أكثر." },
-    { title: "روح الفريق", icon: "🤝", unlocked: points.peers === 5, desc: "أكملتِ تقييم زميلاتكِ." },
-    { title: "المحققة الذهبية", icon: "🏆", unlocked: points.total === 100, desc: "حققتِ جميع نقاط الإنجاز." }];
+  const badges = [{ title: "محققة البداية", icon: "scan", unlocked: points.identity === 10, desc: "أكملتِ بيانات المهمة." },
+    { title: "عين الصقر", icon: "eye", unlocked: points.axes === 75, desc: "أتممتِ تقييم المحاور الخمسة." },
+    { title: "جامعة الأدلة", icon: "gem", unlocked: points.evidence === 10, desc: "وثّقتِ ثلاثة أدلة أو أكثر، ودليل كل تقييم بـ 5 أو 0." },
+    { title: "روح الفريق", icon: "users", unlocked: points.peers === 5, desc: "أكملتِ تقييم زميلاتكِ." },
+    { title: "المحققة الذهبية", icon: "trophy", unlocked: points.total === 100, desc: "حققتِ جميع نقاط الإنجاز." }];
   return badges;
 }
 function stageProgress() { return Math.round((state.stage - 1) / 7 * 100); }
@@ -158,7 +159,7 @@ function renderStepper() {
     const n = index + 1;
     const cls = n === state.stage ? "active" : n < state.stage ? "done" : "";
     return `<button class="step-node ${cls}" data-goto="${n}" type="button" aria-label="${item.label}" ${n > state.stage ? "disabled" : ""}>
-      <span class="node-circle">${n < state.stage ? "✓" : item.icon}</span><small>${item.label}</small></button>`;
+      <span class="node-circle">${n < state.stage ? icon("check") : item.icon}</span><small>${item.label}</small></button>`;
   }).join("");
   stepper.querySelectorAll("[data-goto]").forEach(btn => btn.addEventListener("click", () => {
     const target = Number(btn.dataset.goto);
@@ -197,14 +198,14 @@ function stageActions(prev, next, nextLabel = "التالي") {
 
 function renderStudentStage() {
   return `<div class="stage-card">
-    ${pageHeader("🕵🏻‍♀️", "بوابة المحققات", "عرّفي بنفسكِ للبدء في مغامرة تقييم المتجر الإلكتروني.", "المحطة الأولى")}
+    ${pageHeader(icon("detective"), "بوابة المحققات", "عرّفي بنفسكِ للبدء في مغامرة تقييم المتجر الإلكتروني.", "المحطة الأولى")}
     <div class="form-grid">
       <div class="field full"><label for="studentName">اسم الطالبة *</label><input id="studentName" maxlength="80" autocomplete="name" placeholder="اكتبي اسمكِ" value="${escapeHtml(state.studentName)}"></div>
       <div class="field"><label for="className">الفصل *</label><select id="className">${[1,2,3,4,5,6].map(n => `<option value="ثالث ${n}" ${state.className === `ثالث ${n}` ? "selected" : ""}>ثالث ${n}</option>`).join("")}</select><small class="field-help">اختاري فصلكِ من القائمة.</small></div>
       <div class="field"><label for="groupName">اسم المجموعة *</label><input id="groupName" maxlength="60" placeholder="مثال: المحققات الذهبيات" value="${escapeHtml(state.groupName)}"></div>
       <div class="field full"><label for="membersText">أسماء زميلات المجموعة *</label><textarea id="membersText" maxlength="500" placeholder="اكتبي اسم كل زميلة في سطر مستقل">${escapeHtml(state.membersText)}</textarea><small class="field-help">ستظهر الأسماء في قسم تقييم الأقران، ولن تتمكني من تقييم نفسكِ.</small></div>
     </div>
-    <div class="soft-notice">✨ مهمتكِ: فحص متجر إلكتروني، وتوثيق ما تشاهدينه، ثم إصدار حكم مستند إلى الأدلة. لا تشاركي أي معلومات شخصية أو مالية.</div>
+    <div class="soft-notice">${icon("sparkles")} مهمتكِ: فحص متجر إلكتروني، وتوثيق ما تشاهدينه، ثم إصدار حكم مستند إلى الأدلة. لا تشاركي أي معلومات شخصية أو مالية.</div>
     ${stageActions(false, true, "الانتقال إلى بيانات المتجر")}
   </div>`;
 }
@@ -212,8 +213,9 @@ function renderStudentStage() {
 function renderStoreStage() {
   const productTypes = ["ملابس وأزياء", "أجهزة إلكترونية", "كتب ومستلزمات دراسية", "أغذية ومنتجات استهلاكية", "منتجات تجميل", "خدمات رقمية", "أخرى"];
   return `<div class="stage-card">
-    ${pageHeader("🛍️", "بطاقة تعريف المتجر", "اختاري متجرًا إلكترونيًا يمكن فحص صفحاته العامة.", "المحطة الثانية")}
+    ${pageHeader(icon("bag"), "بطاقة تعريف المتجر", "اختاري متجرًا إلكترونيًا يمكن فحص صفحاته العامة.", "المحطة الثانية")}
     <div class="axis-banner"><small>وجهتكِ التالية · شارع المتاجر</small><h3>كل متجر يحكي قصة… اكتشفي تفاصيلها</h3><p>ابدئي بجمع المعلومات الأساسية قبل تقييم المعايير.</p></div>
+    ${trainingCardHtml()}
     <div class="form-grid">
       <div class="field"><label for="storeName">اسم المتجر *</label><input id="storeName" maxlength="120" placeholder="مثال: اسم المتجر" value="${escapeHtml(state.storeName)}"></div>
       <div class="field"><label for="storeUrl">رابط المتجر *</label><input id="storeUrl" maxlength="500" type="url" dir="ltr" placeholder="https://example.com" value="${escapeHtml(state.storeUrl)}"><small class="field-help">استخدمي رابط الموقع الرسمي الذي تريدين تقييمه.</small></div>
@@ -222,7 +224,7 @@ function renderStoreStage() {
       <div class="field"><label>الفصل</label><input disabled value="${escapeHtml(state.className)}"></div>
       <div class="field"><label>اسم المجموعة</label><input disabled value="${escapeHtml(state.groupName || "لم يحدد")}"></div>
     </div>
-    <div class="soft-notice">🔐 تنبيه أمني: تصفحي الصفحات العامة فقط. لا تنشئي حسابًا جديدًا ولا تدخلي بيانات بطاقة أو كلمة مرور، ولا تضغطي على تأكيد الطلب.</div>
+    <div class="soft-notice">${icon("lock")} تنبيه أمني: تصفحي الصفحات العامة فقط. لا تنشئي حسابًا جديدًا ولا تدخلي بيانات بطاقة أو كلمة مرور، ولا تضغطي على تأكيد الطلب.</div>
     ${stageActions(true, true, "ابدئي فحص المتجر")}
   </div>`;
 }
@@ -239,15 +241,16 @@ function renderAxisStage(axisIndex) {
   const axisScore = axis.items.reduce((sum, [id]) => sum + (state.scores[id] === "NA" || state.scores[id] === undefined ? 0 : Number(state.scores[id])), 0);
   const axisDenom = axis.items.filter(([id]) => state.scores[id] !== "NA" && state.scores[id] !== undefined).length * 5;
   return `<div class="stage-card">
-    ${pageHeader(axis.icon, axis.title, axis.intro, `المحطة ${axisIndex + 1} من 5`)}
+    ${pageHeader(icon(axis.icon), axis.title, axis.intro, `المحطة ${axisIndex + 1} من 5`)}
     <div class="axis-banner"><small>بوليفارد الرياض · ${axis.place}</small><h3>${axis.short}</h3><p>ابحثي عن الدليل، ثم اختاري مستوى تحقق المعيار.</p></div>
     <div class="criteria-list">${axis.items.map(([id, text], i) => `
-      <article class="criterion-card ${state.scores[id] !== undefined ? "selected" : ""}" data-criterion="${id}">
-        <div class="criterion-top"><span class="criterion-number">${i + 1}</span><div class="criterion-text">${text}</div></div>
+      <article class="criterion-card ${state.scores[id] !== undefined ? "selected" : ""} ${needsEvidence(id) ? (hasEvidence(state.notes[id]) ? "evidence-ok" : "needs-evidence") : ""}" data-criterion="${id}">
+        <div class="criterion-top"><span class="criterion-number">${i + 1}</span><div class="criterion-text">${text}</div>${howButtonHtml(id)}</div>
+        ${howPanelHtml(id)}
         <div class="score-options" role="radiogroup" aria-label="تقييم المعيار ${i + 1}">
           ${scoreLabels.map(option => `<div class="score-option ${option.cls}"><input type="radio" id="${id}-${option.value}" name="score-${id}" value="${option.value}" ${String(state.scores[id]) === option.value ? "checked" : ""}><label for="${id}-${option.value}"><b>${option.value === "NA" ? "—" : option.value}</b><small>${option.name}</small></label></div>`).join("")}
         </div>
-        <div class="note-wrap"><input class="note-input" data-note="${id}" maxlength="500" placeholder="الدليل أو الملاحظة (اختياري)" value="${escapeHtml(state.notes[id] || "")}"></div>
+        <div class="note-wrap"><input class="note-input" data-note="${id}" maxlength="500" placeholder="${needsEvidence(id) ? "الدليل مطلوب: ماذا شاهدتِ؟ وأين؟" : "الدليل أو الملاحظة (يُنصح بها)"}" value="${escapeHtml(state.notes[id] || "")}">${needsEvidence(id) ? `<small class="evidence-msg">${icon("warn")} التقييم بـ 5 أو 0 يحتاج دليلًا مكتوبًا (جملة قصيرة من كلمتين على الأقل).</small>` : ""}</div>
       </article>`).join("")}</div>
     <div class="axis-bottom"><span>المعايير المكتملة: ${complete} من ${axis.items.length}</span><span class="axis-score">${axisScore} / ${axisDenom || axis.max} درجة محتسبة</span></div>
     ${stageActions(true, true, axisIndex === 4 ? "عرض النتيجة النهائية" : "المحطة التالية")}
@@ -270,7 +273,7 @@ function renderPeerSection() {
     ["respect", "احترام آراء الزميلات والالتزام بوقت العمل"]
   ];
   if (!members.length) return `<div class="soft-notice">لم تُسجل أسماء زميلات للمجموعة. عودي إلى بيانات المحققة وأضيفي أسماء عضوات الفريق لإكمال تقييم الأقران.</div>`;
-  return `<section class="result-panel" style="margin-top:14px"><h4>🤝 تقييم الأقران – عين المحققة على فريقها</h4><p class="field-help">قيّمي مساهمة كل زميلة بموضوعية. لا تقيّمي نفسكِ، وستكون التقييمات متاحة للمعلمة فقط.</p>
+  return `<section class="result-panel" style="margin-top:14px"><h4>${icon("users")} تقييم الأقران – عين المحققة على فريقها</h4><p class="field-help">قيّمي مساهمة كل زميلة بموضوعية. لا تقيّمي نفسكِ، وستكون التقييمات متاحة للمعلمة فقط.</p>
     ${members.map((name, index) => {
       const record = state.peerAssessments[name] || { scores: {}, positive: "", suggestion: "" };
       const done = peerEvaluationComplete(name);
@@ -300,19 +303,20 @@ function renderResultsStage() {
   const points = achievementPoints();
   const badges = achievementBadges();
   return `<div class="stage-card">
-    ${pageHeader("🏆", "حصيلة التحقيق", "راجعي نتائج المحاور، وقيّمي مساهمة زميلاتكِ، ثم أصدري التوصية.", "المحطة الأخيرة")}
-    <div class="result-hero"><div><h3>اكتمل فحص المتجر!</h3><p>أحسنتِ يا ${escapeHtml(state.studentName || "محققة")}, جمعتِ الأدلة وأصبحتِ جاهزة لإصدار الحكم.</p></div><div class="result-medal">🏅</div></div>
+    ${pageHeader(icon("trophy"), "حصيلة التحقيق", "راجعي نتائج المحاور، وقيّمي مساهمة زميلاتكِ، ثم أصدري التوصية.", "المحطة الأخيرة")}
+    <div class="result-hero"><div><h3>اكتمل فحص المتجر!</h3><p>أحسنتِ يا ${escapeHtml(state.studentName || "محققة")}, جمعتِ الأدلة وأصبحتِ جاهزة لإصدار الحكم.</p></div><div class="result-medal">${icon("medal")}</div></div>
     <div class="result-score"><strong>${denominator ? `${total} / ${denominator}` : "—"}</strong><span>درجة من مجموع الدرجات المتاحة</span><strong class="percent">${denominator ? `${percent}%` : "—"}</strong><div style="margin-top:9px"><span class="result-badge ${label.cls}">${label.text}</span></div></div>
     <div class="result-columns"><section class="result-panel"><h4>تحليل محاور التحقيق</h4>${axisRows}</section><section class="result-panel"><h4>بيانات المشاركة</h4><p class="field-help">الطالبة: <b>${escapeHtml(state.studentName)}</b></p><p class="field-help">الفصل: <b>${escapeHtml(state.className)}</b></p><p class="field-help">المجموعة: <b>${escapeHtml(state.groupName || "لم يحدد")}</b></p><p class="field-help">المتجر: <b>${escapeHtml(state.storeName)}</b></p><p class="field-help">المعايير المكتملة: <b>${getAnswered().length} / 21</b></p><p class="field-help">المعايير غير المتاحة: <b>${getAnswered().filter(x => state.scores[x.id] === "NA").length}</b></p></section></div>
     <section class="result-panel" style="margin-top:14px"><h4>التوصية النهائية للمجموعة *</h4><div class="recommendations">${recommendOptions.map(value => `<label class="recommendation"><input type="radio" name="recommendation" value="${escapeHtml(value)}" ${state.recommendation === value ? "checked" : ""}><span>${value}</span></label>`).join("")}</div></section>
     ${renderPeerSection()}
-    <section class="result-panel rewards-panel" style="margin-top:14px"><div class="rewards-heading"><div><h4>✨ رصيد الإنجاز والجوائز</h4><p class="field-help">تُمنح النقاط لإكمال العمل والتوثيق والتعاون، وليس لكون المتجر حصل على درجة مرتفعة.</p></div><div class="rewards-total"><b>${points.total}</b><small>/ 100</small></div></div>
+    ${masterySummaryHtml()}
+    <section class="result-panel rewards-panel" style="margin-top:14px"><div class="rewards-heading"><div><h4>${icon("sparkles")} رصيد الإنجاز والجوائز</h4><p class="field-help">تُمنح النقاط لإكمال العمل والتوثيق والتعاون، وليس لكون المتجر حصل على درجة مرتفعة.</p></div><div class="rewards-total"><b>${points.total}</b><small>/ 100</small></div></div>
       <div class="points-breakdown"><span>بيانات المهمة <b>${points.identity}/10</b></span><span>المحاور الخمسة <b>${points.axes}/75</b></span><span>توثيق الأدلة <b>${points.evidence}/10</b></span><span>تقييم الأقران <b>${points.peers}/5</b></span></div>
-      <div class="badge-grid">${badges.map(b => `<div class="badge-tile ${b.unlocked ? "unlocked" : "locked"}"><span>${b.icon}</span><b>${b.title}</b><small>${b.unlocked ? "تم فتح الشارة" : b.desc}</small></div>`).join("")}</div>
+      <div class="badge-grid">${badges.map(b => `<div class="badge-tile ${b.unlocked ? "unlocked" : "locked"}"><span>${icon(b.icon)}</span><b>${b.title}</b><small>${b.unlocked ? "تم فتح الشارة" : b.desc}</small></div>`).join("")}</div>
     </section>
     <div class="soft-notice">هذه النتيجة تقيس المؤشرات الظاهرة التي أمكن فحصها فقط، ولا تعد شهادة تضمن سلامة المتجر. لا تنفذي عملية شراء حقيقية ولا تدخلي بيانات مالية.</div>
-    <div class="save-panel"><b>📩 حفظ مشاركة المحققة</b><p>بعد اعتماد التوصية وإكمال تقييم الأقران، أرسلي مشاركتكِ لحفظ بياناتكِ ودرجات المعايير والتقييمات والإنجازات في Google Sheets.</p><div class="stage-actions" style="border:0;padding:0;margin:12px 0 0"><button class="btn btn-print" id="printBtn" type="button">طباعة / PDF</button><button class="btn btn-save" id="saveBtn" type="button" ${state.saving ? "disabled" : ""}>${state.saving ? "جارٍ الحفظ…" : "إرسال وحفظ المشاركة"} ←</button></div><div id="saveStatus" class="save-status" role="status"></div></div>
-    <div class="stage-actions"><button class="btn btn-secondary" data-action="prev" type="button">→ مراجعة التقييم</button><button class="exit-icon exit-icon-lg js-exit" id="exitBtnResult" type="button" title="خروج من لوحة الطالبة" aria-label="خروج من لوحة الطالبة"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>خروج</span></button><button class="copy-icon" id="copyBtn" type="button" title="نسخ التقرير" aria-label="نسخ التقرير">📋</button></div>
+    <div class="save-panel"><b>${icon("mail")} حفظ مشاركة المحققة</b><p>بعد اعتماد التوصية وإكمال تقييم الأقران، أرسلي مشاركتكِ لحفظ بياناتكِ ودرجات المعايير والتقييمات والإنجازات في Google Sheets.</p><div class="stage-actions" style="border:0;padding:0;margin:12px 0 0"><button class="btn btn-print" id="printBtn" type="button">طباعة / PDF</button><button class="btn btn-save" id="saveBtn" type="button" ${state.saving ? "disabled" : ""}>${state.saving ? "جارٍ الحفظ…" : "إرسال وحفظ المشاركة"} ←</button></div><div id="saveStatus" class="save-status" role="status"></div></div>
+    <div class="stage-actions"><button class="btn btn-secondary" data-action="prev" type="button">→ مراجعة التقييم</button><button class="exit-icon exit-icon-lg js-exit" id="exitBtnResult" type="button" title="خروج من لوحة الطالبة" aria-label="خروج من لوحة الطالبة"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>خروج</span></button><button class="copy-icon" id="copyBtn" type="button" title="نسخ التقرير" aria-label="نسخ التقرير">${icon("clipboard")}</button></div>
   </div>`;
 }
 function render() {
@@ -353,17 +357,20 @@ function validateAxis(axisIndex) {
   const axis = AXES[axisIndex];
   const missing = axis.items.filter(([id]) => state.scores[id] === undefined);
   if (missing.length) return `بقي ${missing.length} من المعايير دون تقييم في هذه المحطة.`;
+  const noEvidence = axis.items.filter(([id]) => needsEvidence(id) && !hasEvidence(state.notes[id]));
+  if (noEvidence.length) { const first = document.querySelector(`[data-note="${noEvidence[0][0]}"]`); if (first) first.focus({ preventScroll: false }); return `اكتبي الدليل للمعايير المقيّمة بـ 5 أو 0 (بقي ${noEvidence.length}).`; }
   return null;
 }
 function goTo(stage) {
   if (stage < 1 || stage > 8) return;
+  if (stage > state.stage) sound.play("stage");
   state.stage = stage; render();
   document.getElementById("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function nextStage() {
   let error = null;
   if (state.stage === 1) error = validateStudent();
-  else if (state.stage === 2) error = validateStore();
+  else if (state.stage === 2) error = validateStore() || (trainingComplete() ? null : "أكملي المستوى التدريبي أولًا (متجران وهميان) ثم تابعي إلى المتجر الحقيقي.");
   else if (state.stage >= 3 && state.stage <= 7) error = validateAxis(state.stage - 3);
   else if (state.stage === 8 && !state.recommendation) error = "اختاري التوصية النهائية قبل الإرسال.";
   if (error) { showToast(error); return; }
@@ -383,12 +390,18 @@ function bindStageEvents() {
   stageContent.querySelectorAll('input[type="radio"][name^="score-"]').forEach(radio => radio.addEventListener("change", () => {
     const id = radio.name.replace("score-", "");
     state.scores[id] = radio.value === "NA" ? "NA" : Number(radio.value);
+    sound.play("tick");
     render();
   }));
   stageContent.querySelectorAll("[data-note]").forEach(input => input.addEventListener("input", () => {
-    state.notes[input.dataset.note] = input.value;
+    const id = input.dataset.note;
+    state.notes[id] = input.value;
+    const card = input.closest(".criterion-card");
+    if (card && needsEvidence(id)) { const ok = hasEvidence(input.value); card.classList.toggle("evidence-ok", ok); card.classList.toggle("needs-evidence", !ok); }
     persistDraft();
   }));
+  bindHowButtons(stageContent);
+  const trainBtn = $("#openTrain"); if (trainBtn) trainBtn.addEventListener("click", openTraining);
   stageContent.querySelectorAll('input[name="recommendation"]').forEach(input => input.addEventListener("change", () => {
     state.recommendation = input.value; persistDraft();
   }));
@@ -480,6 +493,7 @@ async function saveSubmission() {
   if (!state.recommendation) { setSaveStatus("اختاري التوصية النهائية أولًا.", "error"); return; }
   if (getDenominator() === 0) { setSaveStatus("لا يمكن حفظ النتيجة؛ يجب أن يوجد معيار واحد على الأقل قابل للتقييم.", "error"); return; }
   if (getMissing()) { setSaveStatus("توجد معايير لم يتم تقييمها بعد.", "error"); return; }
+  if (missingEvidenceIds().length) { setSaveStatus(`بقي ${missingEvidenceIds().length} من التقييمات بـ 5 أو 0 دون دليل مكتوب؛ عودي للمحطات وأضيفي الدليل.`, "error"); return; }
   if (!peerComplete()) { setSaveStatus("أكملي تقييم جميع زميلات المجموعة قبل إرسال المشاركة.", "error"); return; }
   state.saving = true;
   const btn = $("#saveBtn"); if (btn) { btn.disabled = true; btn.textContent = "جارٍ إرسال التحقيق…"; }
@@ -505,7 +519,7 @@ async function saveSubmission() {
       if (!reply || reply.ok !== true) throw new Error(reply && reply.error ? (reply.error === "invalid_access_code" ? "رمز دخول الصف غير صحيح. ارجعي إلى المحطة الأولى (بوابة المحققة) وصحّحي الرمز، أو اسألي المعلمة عنه." : "رفض الخادم الحفظ: " + reply.error + ".") : "لم يصل تأكيد من Google Sheets.");
     }
     setSaveStatus("تم حفظ مشاركتكِ بنجاح في سجل المشروع. أحسنتِ يا محققة!", "success");
-    showToast("وصلت مشاركتكِ بنجاح إلى سجل المشروع ✨");
+    showToast("وصلت مشاركتكِ بنجاح إلى سجل المشروع."); sound.play("win");
     localStorage.removeItem(CONFIG.DRAFT_KEY);
     state.submissionId = null;
   } catch (error) {
@@ -574,7 +588,7 @@ function settleScene() {
 }
 function showCaption(stage) {
   const el = $("#sceneCaption"); if (!el) return;
-  el.innerHTML = `<span>📍</span><b>${SCENES[stage - 1].place}</b><small>المحطة ${stage} من 8</small>`;
+  el.innerHTML = `<span>${icon("pin")}</span><b>${SCENES[stage - 1].place}</b><small>المحطة ${stage} من 8</small>`;
   el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
   clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 3400);
 }
@@ -622,11 +636,11 @@ function updateTourBar() {
     li.classList.toggle("active", n === state.stage);
     li.classList.toggle("done", n < state.stage);
     dot.disabled = n >= state.stage;
-    dot.querySelector("span").textContent = n < state.stage ? "✓" : String(n);
+    dot.querySelector("span").innerHTML = n < state.stage ? icon("check") : String(n);
     if (n === state.stage) dot.setAttribute("aria-current", "step"); else dot.removeAttribute("aria-current");
   });
   const now = $("#tourNow");
-  if (now) now.innerHTML = `<b>📍 ${SCENES[state.stage - 1].place}</b><span>المحطة ${state.stage} من 8</span>`;
+  if (now) now.innerHTML = `<b>${icon("pin")} ${SCENES[state.stage - 1].place}</b><span>المحطة ${state.stage} من 8</span>`;
 }
 
 const axisDone = new Set();
@@ -643,14 +657,14 @@ function fireAxisGlow(index) {
   const glow = $("#sceneGlow");
   if (glow) {
     glow.style.setProperty("--glow", AXIS_GLOW[index]);
-    glow.innerHTML = Array.from({ length: 16 }, (_, i) => `<i style="left:${8 + Math.random() * 60}%;top:${30 + Math.random() * 55}%;animation-delay:${(i * 60)}ms;font-size:${12 + Math.random() * 16}px">✦</i>`).join("");
+    glow.innerHTML = Array.from({ length: 16 }, (_, i) => `<i style="left:${8 + Math.random() * 60}%;top:${30 + Math.random() * 55}%;animation-delay:${(i * 60)}ms;font-size:${12 + Math.random() * 16}px">${icon("sparkles")}</i>`).join("");
     glow.classList.remove("burst"); void glow.offsetWidth; glow.classList.add("burst");
   }
   const card = stageContent.querySelector(".stage-card");
   if (card) { card.style.setProperty("--glow", AXIS_GLOW[index]); card.classList.add("axis-glow"); }
   const li = document.querySelectorAll(".tour-stop")[index + 2];
   if (li) li.classList.add("just-done");
-  showToast(`✨ اكتمل محور «${AXES[index].short}» — أضاءت المحطة!`);
+  showToast(`اكتمل محور «${AXES[index].short}» — أضاءت المحطة!`); sound.play("axis");
 }
 
 /* ===== الخروج من لوحة الطالبة: يمسح الجلسة المحلية ويعيد البداية، ولا يمس البيانات المحفوظة في Google Sheets ===== */
@@ -674,12 +688,15 @@ function exitStudentPanel() {
   render();
   try { localStorage.removeItem(CONFIG.DRAFT_KEY); } catch (_) { /* storage may be disabled */ }
   window.scrollTo({ top: 0, behavior: "smooth" });
-  showToast("تم الخروج من لوحة الطالبة. نراكِ في مهمة جديدة! 👋");
+  showToast("تم الخروج من لوحة الطالبة. نراكِ في مهمة جديدة!");
 }
 document.addEventListener("click", e => { if (e.target.closest(".js-exit")) openExitDialog(); });
 $("#exitStay").addEventListener("click", () => $("#exitDialog").close());
 $("#exitConfirm").addEventListener("click", exitStudentPanel);
 
+fillIconSlots();
+sound.init();
+const soundBtn = $("#soundBtn"); if (soundBtn) soundBtn.addEventListener("click", () => sound.toggle());
 buildTourBar();
 loadDraft();
 AXES.forEach((axis, index) => { if (axisIsComplete(axis)) axisDone.add(index); });
