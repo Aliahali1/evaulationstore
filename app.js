@@ -449,13 +449,24 @@ function jsonpStatus(url, submissionId) {
     document.body.appendChild(script);
   });
 }
+async function fetchStatus(url, submissionId) {
+  // Anonymous request (no cookies): avoids Google's multi-account redirect that breaks <script> JSONP loading.
+  const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}action=status&id=${encodeURIComponent(submissionId)}&_=${Date.now()}`, { method: "GET", credentials: "omit", cache: "no-store", redirect: "follow" });
+  if (!res.ok) throw new Error("status " + res.status);
+  return res.json();
+}
 async function confirmSaved(url, submissionId) {
+  let lastError = null;
   for (let attempt = 0; attempt < CONFIG.POLL_ATTEMPTS; attempt++) {
     await new Promise(resolve => setTimeout(resolve, CONFIG.POLL_INTERVAL_MS));
-    const status = await jsonpStatus(url, submissionId);
+    let status = null;
+    try { status = await fetchStatus(url, submissionId); }
+    catch (e1) {
+      try { status = await jsonpStatus(url, submissionId); } catch (e2) { lastError = e2; }
+    }
     if (status && status.found === true) return status;
   }
-  throw new Error("لم يصل تأكيد من Google Sheets بعد. راجعي اتصال الخدمة أو أعيدي المحاولة.");
+  throw new Error(lastError ? "تعذر الاتصال بخدمة التحقق. تأكدي من الاتصال بالإنترنت." : "لم يصل تأكيد من Google Sheets بعد. راجعي اتصال الخدمة أو أعيدي المحاولة.");
 }
 async function saveSubmission() {
   if (state.saving) return;
