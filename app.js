@@ -6,6 +6,7 @@
 const CONFIG = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwIwsWkMcgy6PfxOBsuv0owT0wiDnysHWCXbS7FY8prXIKwOU_jrvcGjTwpCAGRy9F6Sg/exec", // Paste the deployed Apps Script Web App URL ending in /exec.
   DRAFT_KEY: "boulevard-store-detective-draft-v1",
+  CLASS_ACCESS_CODE: "1212", // يُرسل تلقائيًا؛ يجب أن يطابق CLASS_ACCESS_CODE في خصائص السكربت
   POLL_ATTEMPTS: 8,
   POLL_INTERVAL_MS: 1500
 };
@@ -202,7 +203,6 @@ function renderStudentStage() {
       <div class="field"><label for="className">الفصل *</label><select id="className">${[1,2,3,4,5,6].map(n => `<option value="ثالث ${n}" ${state.className === `ثالث ${n}` ? "selected" : ""}>ثالث ${n}</option>`).join("")}</select><small class="field-help">اختاري فصلكِ من القائمة.</small></div>
       <div class="field"><label for="groupName">اسم المجموعة *</label><input id="groupName" maxlength="60" placeholder="مثال: المحققات الذهبيات" value="${escapeHtml(state.groupName)}"></div>
       <div class="field full"><label for="membersText">أسماء زميلات المجموعة *</label><textarea id="membersText" maxlength="500" placeholder="اكتبي اسم كل زميلة في سطر مستقل">${escapeHtml(state.membersText)}</textarea><small class="field-help">ستظهر الأسماء في قسم تقييم الأقران، ولن تتمكني من تقييم نفسكِ.</small></div>
-      <div class="field full"><label for="accessCode">رمز دخول الصف (اطلبيه من المعلمة) *</label><input id="accessCode" maxlength="60" autocomplete="off" placeholder="اكتبي رمز الصف الذي أعطته لكِ المعلمة" value="${escapeHtml(state.accessCode)}"><small class="field-help">يستخدم الرمز عند تفعيله من إعدادات المشروع لحماية المشاركات من الإرسال العشوائي.</small></div>
     </div>
     <div class="soft-notice">✨ مهمتكِ: فحص متجر إلكتروني، وتوثيق ما تشاهدينه، ثم إصدار حكم مستند إلى الأدلة. لا تشاركي أي معلومات شخصية أو مالية.</div>
     ${stageActions(false, true, "الانتقال إلى بيانات المتجر")}
@@ -327,7 +327,7 @@ function render() {
 }
 
 function collectCurrentInputs() {
-  const ids = ["studentName", "className", "groupName", "membersText", "accessCode", "storeName", "storeUrl", "productType", "tradeModel"];
+  const ids = ["studentName", "className", "groupName", "membersText", "storeName", "storeUrl", "productType", "tradeModel"];
   ids.forEach(id => { const el = document.getElementById(id); if (el) state[id] = el.value.trim(); });
 }
 function validateStudent() {
@@ -374,7 +374,7 @@ function bindStageEvents() {
   const prev = stageContent.querySelector('[data-action="prev"]');
   if (next) next.addEventListener("click", nextStage);
   if (prev) prev.addEventListener("click", () => goTo(state.stage - 1));
-  ["studentName", "className", "groupName", "membersText", "accessCode", "storeName", "storeUrl", "productType", "tradeModel"].forEach(id => {
+  ["studentName", "className", "groupName", "membersText", "storeName", "storeUrl", "productType", "tradeModel"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("input", () => { state[id] = el.value.trim(); updateSidebar(); persistDraft(); });
@@ -424,7 +424,7 @@ function makePayload() {
     members: getMembers(),
     peerAssessments: getMembers().map(peerName => ({ peerName, scores: state.peerAssessments[peerName]?.scores || {}, positive: state.peerAssessments[peerName]?.positive || "", suggestion: state.peerAssessments[peerName]?.suggestion || "" })),
     achievements: { points: achievementPoints(), badges: achievementBadges().filter(b => b.unlocked).map(b => b.title) },
-    accessCode: normalizeCode(state.accessCode),
+    accessCode: CONFIG.CLASS_ACCESS_CODE,
     storeName: state.storeName,
     storeUrl: state.storeUrl,
     productType: state.productType,
@@ -477,7 +477,6 @@ async function saveSubmission() {
     setSaveStatus("أضيفي رابط Google Apps Script المنشور داخل CONFIG في ملف app.js أولًا.", "error");
     return;
   }
-  if (!normalizeCode(state.accessCode)) { setSaveStatus("رمز دخول الصف مطلوب للإرسال. ارجعي إلى المحطة الأولى (بوابة المحققة) واكتبي الرمز الذي أعطته لكِ المعلمة.", "error"); return; }
   if (!state.recommendation) { setSaveStatus("اختاري التوصية النهائية أولًا.", "error"); return; }
   if (getDenominator() === 0) { setSaveStatus("لا يمكن حفظ النتيجة؛ يجب أن يوجد معيار واحد على الأقل قابل للتقييم.", "error"); return; }
   if (getMissing()) { setSaveStatus("توجد معايير لم يتم تقييمها بعد.", "error"); return; }
